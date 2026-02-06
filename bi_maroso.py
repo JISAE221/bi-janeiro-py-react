@@ -104,43 +104,69 @@ if df_filtered.empty:
 # --- 7. GRÁFICOS INTERATIVOS ---
 g1, g2 = st.columns([2, 1])
 
-# --- GRÁFICO DE BARRAS (COM INTERATIVIDADE) ---
+# --- GRÁFICO DE BARRAS (COM INTERATIVIDADE E TODOS OS DIAS) ---
 with g1:
     st.subheader("Evolução Diária")
     
     df_bar = df_filtered.groupby(['data', 'Tipo'])['Qtd'].sum().reset_index()
     
+    # ========================================================================
+    # 🎯 CORREÇÃO: GARANTIR QUE TODOS OS DIAS APAREÇAM NO EIXO X
+    # ========================================================================
+    # 1. Cria range completo de datas do período filtrado
+    if len(data_range) == 2:
+        todas_datas = pd.date_range(start=data_range[0], end=data_range[1], freq='D')
+    else:
+        todas_datas = pd.date_range(start=df_filtered['data'].min(), end=df_filtered['data'].max(), freq='D')
+    
+    # 2. Cria um DataFrame com todas as combinações Data x Tipo
+    tipos_existentes = df_filtered['Tipo'].unique()
+    grid_completo = pd.DataFrame([
+        {'data': d, 'Tipo': t} for d in todas_datas for t in tipos_existentes
+    ])
+    
+    # 3. Faz MERGE com os dados reais (preenchendo vazios com 0)
+    df_bar_completo = grid_completo.merge(df_bar, on=['data', 'Tipo'], how='left')
+    df_bar_completo['Qtd'] = df_bar_completo['Qtd'].fillna(0)
+    # ========================================================================
+    
     # Criação do Gráfico
     fig_bar = px.bar(
-        df_bar, 
+        df_bar_completo, 
         x='data', 
         y='Qtd', 
         color='Tipo',
         color_discrete_map={'BITRUCK': '#0083b8', 'CARRETA': '#ff4b4b', 'OUTROS': '#6c757d'},
-        text='Qtd', # <--- RÓTULO DE DADOS AQUI
+        text='Qtd',
         title="Volume Diário (Clique na barra para filtrar)"
     )
     
-    fig_bar.update_traces(
-        textposition='outside', # Número fica em cima da barra
-        textfont_size=12,
-        textfont_weight='bold',
+    # Esconde os rótulos dos zeros para não poluir o gráfico
+    fig_bar.for_each_trace(lambda t: t.update(
+        text=['' if v == 0 else str(int(v)) for v in t.y],
+        texttemplate='%{text}',
+        textposition='outside',
+        textfont=dict(size=12, weight='bold'),
         cliponaxis=False
-    )
+    ))
     
     fig_bar.update_layout(
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
         xaxis_title=None,
         yaxis_title=None,
-        showlegend=False, # Legenda redundante com as cores
+        showlegend=False,
         margin=dict(t=40, r=20, l=20, b=20),
         height=380
     )
-    fig_bar.update_xaxes(tickformat="%d/%m")
+    
+    # Força um tick por dia
+    fig_bar.update_xaxes(
+        tickformat="%d/%m",
+        dtick=86400000  # 1 dia em milissegundos
+    )
     
     # EXIBIÇÃO COM SELEÇÃO (FEATURE NOVA DO STREAMLIT)
-    # on_select="rerun" faz o dashboard recarregar quando clica
     evento_selecao = st.plotly_chart(fig_bar, use_container_width=True, on_select="rerun")
 
 # --- LÓGICA DE FILTRO CRUZADO (CROSS-FILTERING) ---
