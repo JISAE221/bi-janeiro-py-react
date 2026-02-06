@@ -51,6 +51,8 @@ def load_data():
         df = pd.read_csv("2026-02-06T12-02_export.csv")
         df['data'] = pd.to_datetime(df['data']).dt.tz_localize(None)
         df = df.sort_values('data')
+        # FILTRA "OUTROS" LOGO NA CARGA
+        df = df[df['Tipo'] != 'OUTROS']
         return df
     except Exception as e:
         st.error(f"Erro ao carregar dados: {e}")
@@ -136,7 +138,7 @@ with g1:
         x='data', 
         y='Qtd', 
         color='Tipo',
-        color_discrete_map={'BITRUCK': '#0083b8', 'CARRETA': "#8a3131", 'OUTROS': '#6c757d'},
+        color_discrete_map={'BITRUCK': '#0083b8', 'CARRETA': "#8a3131"},
         text='Qtd',
         title="Volume Diário (Clique na barra para filtrar)"
     )
@@ -207,7 +209,7 @@ with g2:
         hole=.6,
         textinfo='label+percent', # Mostra Nome + %
         marker=dict(colors=[
-            '#0083b8' if t == 'BITRUCK' else "#8a3131" if t == 'CARRETA' else "#FFFFFF" 
+            '#0083b8' if t == 'BITRUCK' else "#8a3131"
             for t in df_pie['Tipo']
         ])
     )])
