@@ -95,7 +95,7 @@ df_filtered = df_raw[mask].copy()
 
 # --- 6. CABEÇALHO ---
 c1, c2 = st.columns([3, 1])
-c1.markdown('<p class="big-font">🚛 Dashboard de Ociosidade da Frota</p>', unsafe_allow_html=True)
+c1.markdown('<p class="big-font">Dashboard de Ociosidade da Frota</p>', unsafe_allow_html=True)
 if len(data_range) == 2:
     c2.caption(f"📅 {data_range[0].strftime('%d/%m')} até {data_range[1].strftime('%d/%m')}")
 
