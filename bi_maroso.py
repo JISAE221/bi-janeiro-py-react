@@ -207,7 +207,7 @@ with g2:
         hole=.6,
         textinfo='label+percent', # Mostra Nome + %
         marker=dict(colors=[
-            '#0083b8' if t == 'BITRUCK' else '#ff4b4b' if t == 'CARRETA' else "#FFFFFF" 
+            '#0083b8' if t == 'BITRUCK' else "#a10909" if t == 'CARRETA' else "#FFFFFF" 
             for t in df_pie['Tipo']
         ])
     )])
