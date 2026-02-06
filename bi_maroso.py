@@ -219,7 +219,7 @@ with g2:
         legend=dict(orientation="h", y=-0.1),
         margin=dict(t=0, b=0, l=0, r=0),
         height=380,
-        annotations=[dict(text=str(total_pie), x=0.5, y=0.5, font_size=40, showarrow=False, font_color="white", font_weight="bold")]
+        annotations=[dict(text=str(total_pie), x=0.5, y=0.5, font_size=40, showarrow=False, font_color="white", font_weight="white")]
     )
     
     st.plotly_chart(fig_pie, use_container_width=True)
