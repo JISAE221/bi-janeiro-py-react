@@ -136,7 +136,7 @@ with g1:
         x='data', 
         y='Qtd', 
         color='Tipo',
-        color_discrete_map={'BITRUCK': '#0083b8', 'CARRETA': '#ff4b4b', 'OUTROS': '#6c757d'},
+        color_discrete_map={'BITRUCK': '#0083b8', 'CARRETA': "#8a3131", 'OUTROS': '#6c757d'},
         text='Qtd',
         title="Volume Diário (Clique na barra para filtrar)"
     )
@@ -207,7 +207,7 @@ with g2:
         hole=.6,
         textinfo='label+percent', # Mostra Nome + %
         marker=dict(colors=[
-            '#0083b8' if t == 'BITRUCK' else "#a10909" if t == 'CARRETA' else "#FFFFFF" 
+            '#0083b8' if t == 'BITRUCK' else "#8a3131" if t == 'CARRETA' else "#FFFFFF" 
             for t in df_pie['Tipo']
         ])
     )])
